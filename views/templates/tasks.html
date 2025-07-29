@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Tasks</h2>
+  <ul style="list-style:none; padding:0;">
+    {% for task in tasks %}
+      <li data-id="{{ task.id }}"
+          style="display:flex; align-items:center; margin-bottom:0.5rem;
+                 padding:0.5rem; border:1px solid #ddd; border-radius:4px;
+                 background:#fafafa;">
+        <span style="flex:1;">{{ task.name }}</span>
+        <label style="margin-right:0.5rem;">
+          Effort (h):
+          <input type="number"
+                 value="{{ task.effort }}"
+                 class="effort-input"
+                 style="width:3rem; padding:0.2rem;" />
+        </label>
+      </li>
+    {% endfor %}
+  </ul>
+  <button id="save-effort"
+          style="padding:0.5rem 1rem; font-size:1rem;
+                 background:#28a745; color:#fff; border:none;
+                 border-radius:4px; cursor:pointer;">
+    Save Effort
+  </button>
+
+  <script>
+    document.getElementById('save-effort').addEventListener('click', () => {
+      // collect all taskId + hours payloads
+      const items = Array.from(document.querySelectorAll('li[data-id]'));
+      const payloads = items.map(li => ({
+        taskId: li.getAttribute('data-id'),
+        hours: Number(li.querySelector('.effort-input').value)
+      }));
+
+      // send all in parallel, then reload on full success
+      Promise.all(payloads.map(data =>
+        fetch('/tasks/effort', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        })
+      ))
+      .then(responses => {
+        if (responses.every(r => r.ok)) {
+          alert('✅ All efforts saved!');
+          window.location.reload();
+        } else {
+          const failed = responses
+            .map((r,i) => (!r.ok ? payloads[i].taskId : null))
+            .filter(x => x);
+          alert('❌ Failed to save tasks: ' + failed.join(', '));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('⚠️ Network/server error; see console.');
+      });
+    });
+  </script>
+{% endblock %}
