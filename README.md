@@ -12,6 +12,24 @@ TaskTuner is a Flask-based web application that transforms your productivity by 
 - 📅 **Visual Calendar** - Interactive calendar view powered by FullCalendar
 - 🔄 **Multiple Algorithms** - Choose between balanced, largest-first, or smallest-first scheduling strategies
 
+## Screenshots
+
+### Home Page
+![TaskTuner Home Page](screenshots/home-page.png)
+*Welcome screen with feature overview and navigation*
+
+### Task Management
+![Task Management Interface](screenshots/tasks-page.png)
+*Intuitive task list with effort estimation and bulk editing capabilities*
+
+### Interactive Schedule
+![Calendar Schedule View](screenshots/schedule-page.png)
+*Visual calendar with drag-and-drop scheduling and algorithm selection*
+
+### Bulk Edit Modal
+![Bulk Edit Dialog](screenshots/bulk-edit-modal.png)
+*Efficient bulk editing for setting effort estimates on multiple tasks*
+
 ## Quick Start
 
 ### Prerequisites
@@ -94,6 +112,11 @@ tasktuner/
 ├── config.py             # Configuration settings
 ├── requirements.txt      # Python dependencies
 ├── .env                 # Environment variables (create this)
+├── screenshots/         # UI screenshots for documentation
+│   ├── home-page.png
+│   ├── tasks-page.png
+│   ├── schedule-page.png
+│   └── bulk-edit-modal.png
 ├── controllers/         # Route controllers
 │   ├── page_controller.py    # UI routes
 │   ├── task_controller.py    # Task API routes
@@ -251,6 +274,25 @@ If Trello API is unavailable, the app will attempt to load tasks from `task_data
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+## Taking Screenshots
+
+To help maintain up-to-date documentation, here's how to capture screenshots:
+
+1. **Run the application** in development mode
+2. **Navigate to each page** with sample data loaded
+3. **Capture screenshots** at 1280x800 resolution for consistency
+4. **Save in the screenshots/ directory** with descriptive names:
+   - `home-page.png` - Landing page with feature overview
+   - `tasks-page.png` - Task management interface with effort estimates
+   - `schedule-page.png` - Calendar view with scheduled tasks
+   - `bulk-edit-modal.png` - Bulk editing dialog in action
+
+**Screenshot Tips:**
+- Use consistent browser window size (1280x800 recommended)
+- Include realistic sample data for better demonstration
+- Capture both empty and populated states where relevant
+- Ensure UI elements are clearly visible and readable
 
 ## License
 
