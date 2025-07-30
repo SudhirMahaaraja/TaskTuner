@@ -1,22 +1,152 @@
 [
   {
-    "id": "6888dd3f4c0514db5f419076",
-    "name": "Design login page",
-    "effort": 0
+    "id": "sample-001",
+    "name": "Design user interface mockups",
+    "effort": 4
   },
   {
-    "id": "6888dd597391493a8b519ee1",
-    "name": "Design Signup Page",
-    "effort": 0
+    "id": "sample-002",
+    "name": "Set up database schema",
+    "effort": 2
   },
   {
-    "id": "6888dd613518f891b01f0148",
-    "name": "DO some cardio",
-    "effort": 23
+    "id": "sample-003",
+    "name": "Implement user authentication",
+    "effort": 6
   },
   {
-    "id": "6888dd71091bde38afdf8933",
-    "name": "Login Page",
-    "effort": 0
+    "id": "sample-004",
+    "name": "Write API documentation",
+    "effort": 3
+  },
+  {
+    "id": "sample-005",
+    "name": "Create landing page",
+    "effort": 5
+  },
+  {
+    "id": "sample-006",
+    "name": "Set up continuous integration",
+    "effort": 2
+  },
+  {
+    "id": "sample-007",
+    "name": "Implement payment processing",
+    "effort": 8
+  },
+  {
+    "id": "sample-008",
+    "name": "Write unit tests",
+    "effort": 4
+  },
+  {
+    "id": "sample-009",
+    "name": "Configure monitoring and logging",
+    "effort": 3
+  },
+  {
+    "id": "sample-010",
+    "name": "Optimize database queries",
+    "effort": 2
+  },
+  {
+    "id": "sample-011",
+    "name": "Implement search functionality",
+    "effort": 5
+  },
+  {
+    "id": "sample-012",
+    "name": "Create user onboarding flow",
+    "effort": 4
+  },
+  {
+    "id": "sample-013",
+    "name": "Set up email notifications",
+    "effort": 3
+  },
+  {
+    "id": "sample-014",
+    "name": "Implement data export feature",
+    "effort": 2
+  },
+  {
+    "id": "sample-015",
+    "name": "Design mobile responsive layout",
+    "effort": 6
+  },
+  {
+    "id": "sample-016",
+    "name": "Security audit and fixes",
+    "effort": 4
+  },
+  {
+    "id": "sample-017",
+    "name": "Performance optimization",
+    "effort": 3
+  },
+  {
+    "id": "sample-018",
+    "name": "Create admin dashboard",
+    "effort": 7
+  },
+  {
+    "id": "sample-019",
+    "name": "Implement file upload system",
+    "effort": 3
+  },
+  {
+    "id": "sample-020",
+    "name": "Set up backup system",
+    "effort": 2
+  },
+  {
+    "id": "sample-021",
+    "name": "Create user profile management",
+    "effort": 4
+  },
+  {
+    "id": "sample-022",
+    "name": "Implement real-time notifications",
+    "effort": 5
+  },
+  {
+    "id": "sample-023",
+    "name": "Design email templates",
+    "effort": 2
+  },
+  {
+    "id": "sample-024",
+    "name": "Implement analytics tracking",
+    "effort": 3
+  },
+  {
+    "id": "sample-025",
+    "name": "Create help documentation",
+    "effort": 4
+  },
+  {
+    "id": "sample-026",
+    "name": "Set up error tracking",
+    "effort": 1
+  },
+  {
+    "id": "sample-027",
+    "name": "Implement advanced filtering",
+    "effort": 3
+  },
+  {
+    "id": "sample-028",
+    "name": "Create API rate limiting",
+    "effort": 2
+  },
+  {
+    "id": "sample-029",
+    "name": "Design loading states and animations",
+    "effort": 3
+  },
+  {
+    "id": "sample-030",
+    "name": "Implement bulk operations",
+    "effort": 4
   }
 ]
