@@ -1,62 +1,125 @@
 {% extends 'base.html' %}
 {% block content %}
-  <h2>Tasks</h2>
-  <ul style="list-style:none; padding:0;">
-    {% for task in tasks %}
-      <li data-id="{{ task.id }}"
-          style="display:flex; align-items:center; margin-bottom:0.5rem;
-                 padding:0.5rem; border:1px solid #ddd; border-radius:4px;
-                 background:#fafafa;">
-        <span style="flex:1;">{{ task.name }}</span>
-        <label style="margin-right:0.5rem;">
-          Effort (h):
-          <input type="number"
-                 value="{{ task.effort }}"
-                 class="effort-input"
-                 style="width:3rem; padding:0.2rem;" />
-        </label>
-      </li>
-    {% endfor %}
-  </ul>
-  <button id="save-effort"
-          style="padding:0.5rem 1rem; font-size:1rem;
-                 background:#28a745; color:#fff; border:none;
-                 border-radius:4px; cursor:pointer;">
-    Save Effort
-  </button>
 
-  <script>
-    document.getElementById('save-effort').addEventListener('click', () => {
-      // collect all taskId + hours payloads
-      const items = Array.from(document.querySelectorAll('li[data-id]'));
-      const payloads = items.map(li => ({
-        taskId: li.getAttribute('data-id'),
-        hours: Number(li.querySelector('.effort-input').value)
-      }));
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+  <div style="font-size:0.9rem;">
+    <span id="stat-count">Tasks: {{ tasks|length }}</span> |
+    <span id="stat-hours">Total h: {{ tasks|sum(attribute='effort') }}</span>
+  </div>
+  <div>
+    <button id="bulk-open" style="margin-right:0.5rem; padding:0.5rem 1rem; background:var(--gold1); border:none; border-radius:4px; cursor:pointer;">Bulk Set</button>
+    <button id="save-effort" style="padding:0.5rem 1rem; background:var(--gold2); border:none; border-radius:4px; cursor:pointer;">Save Effort</button>
+  </div>
+</div>
 
-      // send all in parallel, then reload on full success
-      Promise.all(payloads.map(data =>
-        fetch('/tasks/effort', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        })
-      ))
-      .then(responses => {
-        if (responses.every(r => r.ok)) {
-          alert('✅ All efforts saved!');
-          window.location.reload();
-        } else {
-          const failed = responses
-            .map((r,i) => (!r.ok ? payloads[i].taskId : null))
-            .filter(x => x);
-          alert('❌ Failed to save tasks: ' + failed.join(', '));
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        alert('⚠️ Network/server error; see console.');
-      });
+<ul id="task-list" style="list-style:none; padding:0;">
+  {% for task in tasks %}
+  <li data-id="{{ task.id }}" style="display:flex; align-items:center; margin:0.5rem 0; padding:0.6rem; border-radius:6px; background:var(--light); border:1px solid var(--gold1);">
+    <input type="checkbox" class="select-task" style="margin-right:0.8rem;"/>
+    <span style="flex:1; color:{{ '#333' if task.effort>0 else '#999' }};">
+      {{ task.name }}
+    </span>
+    <input type="number" value="{{ task.effort }}" class="effort-input"
+      style="width:4rem; padding:0.3rem; border:1px solid #ccc; border-radius:4px;"/>
+  </li>
+  {% endfor %}
+</ul>
+
+<!-- Unsaved warning -->
+<div id="unsaved" style="display:none; position:fixed; bottom:20px; right:20px; background:var(--gold2); color:#fff; padding:0.8rem; border-radius:5px;">
+  You have unsaved changes!
+</div>
+
+<!-- Saved modal -->
+<div id="saved-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
+  <div style="background:#fff; padding:1.5rem; border-radius:8px; text-align:center;">
+    <h2 style="color:var(--blue); margin-bottom:1rem;">✅ Saved!</h2>
+    <button id="saved-close" style="padding:0.5rem 1rem; background:var(--gold1); border:none; border-radius:4px; cursor:pointer;">Close</button>
+  </div>
+</div>
+
+<!-- Bulk‑Set modal -->
+<div id="bulk-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
+  <div style="background:#fff; padding:1.5rem; border-radius:8px; width:300px; text-align:center;">
+    <h3 style="margin-bottom:0.5rem; color:var(--blue);">Set Effort for Selected</h3>
+    <input id="bulk-input" type="number" placeholder="Hours" style="width:80%; padding:0.4rem; margin-bottom:1rem; border:1px solid #ccc; border-radius:4px;"/>
+    <div>
+      <button id="bulk-apply" style="padding:0.5rem 1rem; background:var(--gold2); border:none; border-radius:4px; cursor:pointer; margin-right:0.5rem;">Apply</button>
+      <button id="bulk-cancel" style="padding:0.5rem 1rem; background:var(--gold1); border:none; border-radius:4px; cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let dirty = false;
+  const countEl = document.getElementById('stat-count');
+  const hoursEl = document.getElementById('stat-hours');
+  const unsavedEl = document.getElementById('unsaved');
+
+  function updateStats(){
+    const items = document.querySelectorAll('li[data-id]');
+    const total = Array.from(items)
+      .reduce((sum,li)=>sum + Number(li.querySelector('.effort-input').value),0);
+    countEl.textContent = 'Tasks: '+items.length;
+    hoursEl.textContent = 'Total h: '+total;
+  }
+
+  document.querySelectorAll('.effort-input').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      dirty = true;
+      unsavedEl.style.display='block';
+      updateStats();
     });
-  </script>
+  });
+
+  // Bulk‑Set pop‑up
+  document.getElementById('bulk-open').addEventListener('click',()=>{
+    document.getElementById('bulk-modal').style.display='flex';
+  });
+  document.getElementById('bulk-cancel').addEventListener('click',()=>{
+    document.getElementById('bulk-modal').style.display='none';
+  });
+  document.getElementById('bulk-apply').addEventListener('click',()=>{
+    const val = Number(document.getElementById('bulk-input').value);
+    if (!val && val!==0) return;
+    document.querySelectorAll('.select-task:checked').forEach(cb=>{
+      const li = cb.closest('li');
+      li.querySelector('.effort-input').value = val;
+      li.querySelector('.effort-input').dispatchEvent(new Event('input'));
+    });
+    document.getElementById('bulk-modal').style.display='none';
+    document.getElementById('bulk-input').value = '';
+  });
+
+  // Save Effort
+  document.getElementById('save-effort').addEventListener('click',()=>{
+    const items = Array.from(document.querySelectorAll('li[data-id]'));
+    const payloads = items.map(li=>({
+      taskId: li.getAttribute('data-id'),
+      hours: Number(li.querySelector('.effort-input').value)
+    }));
+    Promise.all(payloads.map(d=>
+      fetch('/tasks/effort',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)})
+    )).then(resps=>{
+      if(resps.every(r=>r.ok)){
+        document.getElementById('saved-modal').style.display='flex';
+        dirty=false; unsavedEl.style.display='none';
+      } else alert('Save failed.');
+    });
+  });
+
+  document.getElementById('saved-close').addEventListener('click',()=>{
+    document.getElementById('saved-modal').style.display='none';
+    location.reload();
+  });
+
+  // Warn unsaved on refresh/leave
+  window.addEventListener('beforeunload',e=>{
+    if(dirty){ e.preventDefault(); e.returnValue=''; }
+  });
+
+  // Initial stats
+  updateStats();
+</script>
+
 {% endblock %}

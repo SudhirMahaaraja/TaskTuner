@@ -18,12 +18,13 @@ def create_app():
     # API blueprints
     app.register_blueprint(task_bp, url_prefix='/tasks')
     app.register_blueprint(schedule_bp, url_prefix='/schedule')
-    # Page blueprint (renders HTML)
+
+    # Page/UI blueprints
     app.register_blueprint(page_bp, url_prefix='')
 
     return app
 
 if __name__ == '__main__':
     app = create_app()
-    # turn off the reloader but keep debug on
+    # disable reloader so in-memory state persists through reloads
     app.run(debug=True, use_reloader=False)
